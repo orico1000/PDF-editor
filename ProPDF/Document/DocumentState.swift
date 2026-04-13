@@ -1,0 +1,26 @@
+import Foundation
+import PDFKit
+import AppKit
+
+@Observable
+class DocumentState {
+    var currentPageIndex: Int = 0
+    var zoomLevel: CGFloat = 1.0
+    var displayMode: PDFDisplayMode = .singlePageContinuous
+    var searchQuery: String = ""
+    var searchResults: [PDFSelection] = []
+    var currentSearchIndex: Int = 0
+    var selectedAnnotation: PDFAnnotation?
+    var editorMode: EditorMode = .viewer
+    var sidebarMode: SidebarMode = .thumbnails
+    var isSidebarVisible: Bool = true
+    var isInspectorVisible: Bool = false
+    var isLoading: Bool = false
+    var errorMessage: String?
+    var showError: Bool = false
+
+    func presentError(_ message: String) {
+        errorMessage = message
+        showError = true
+    }
+}
