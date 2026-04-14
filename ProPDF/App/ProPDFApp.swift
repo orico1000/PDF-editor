@@ -1,25 +1,7 @@
-import SwiftUI
-import PDFKit
-import UniformTypeIdentifiers
+import Foundation
 
-@main
-struct ProPDFApp: App {
-    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-
-    var body: some Scene {
-        // Use Settings scene as a placeholder — actual document windows
-        // are managed by NSDocumentController / ProPDFDocument
-        Settings {
-            Text("ProPDF Preferences")
-                .frame(width: 400, height: 300)
-        }
-
-        Window("Batch Processing", id: "batch") {
-            BatchProcessingWindow()
-        }
-        .defaultSize(width: 800, height: 600)
-    }
-}
+// Entry point is in AppDelegate.swift via @main
+// This file defines shared types used across the app.
 
 enum DocumentAction: String {
     case toggleSidebar, toggleInspector

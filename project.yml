@@ -21,7 +21,8 @@ targets:
     sources:
       - path: ProPDF
         excludes:
-          - "**/*.plist"
+          - "**/Info.plist"
+          - "**/*.entitlements"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.propdf.ProPDF
@@ -33,21 +34,3 @@ targets:
         ENABLE_HARDENED_RUNTIME: YES
         CODE_SIGN_IDENTITY: "-"
         SWIFT_STRICT_CONCURRENCY: minimal
-    info:
-      path: ProPDF/App/Info.plist
-      properties:
-        CFBundleName: ProPDF
-        CFBundleShortVersionString: "1.0"
-        CFBundleVersion: "1"
-        NSPrincipalClass: NSApplication
-        NSSupportsAutomaticTermination: true
-        NSSupportsSuddenTermination: true
-        LSMinimumSystemVersion: $(MACOSX_DEPLOYMENT_TARGET)
-        NSHumanReadableCopyright: "Copyright © 2024. All rights reserved."
-        CFBundleDocumentTypes:
-          - CFBundleTypeName: "PDF Document"
-            CFBundleTypeRole: Editor
-            LSHandlerRank: Alternate
-            LSItemContentTypes:
-              - com.adobe.pdf
-            NSDocumentClass: ProPDF.ProPDFDocument

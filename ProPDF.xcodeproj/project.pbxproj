@@ -254,7 +254,6 @@
 		F9CB3F250A886670635F7EDC /* PrintService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrintService.swift; sourceTree = "<group>"; };
 		FA528D69D591790BB81D5442 /* DocumentState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentState.swift; sourceTree = "<group>"; };
 		FB690C72555BA4B6EC5C21AB /* FontPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontPickerButton.swift; sourceTree = "<group>"; };
-		FE5263F19D8CF04EE5118416 /* ProPDF.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ProPDF.entitlements; sourceTree = "<group>"; };
 		FF00B784D0A6CDBFC5FD9CEE /* SignaturePlacementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignaturePlacementView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -477,7 +476,6 @@
 				14CCCA3561F07FBA2B27E1D3 /* Utilities */,
 				9BFC3B035E5496147C5E471F /* ViewModels */,
 				E4FA291971C7530B28D6CDCF /* Views */,
-				FE5263F19D8CF04EE5118416 /* ProPDF.entitlements */,
 			);
 			path = ProPDF;
 			sourceTree = "<group>";
