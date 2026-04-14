@@ -76,24 +76,30 @@ class ProPDFDocument: NSDocument {
         let contentView = ContentView(viewModel: documentViewModel)
         let hostingController = NSHostingController(rootView: contentView)
 
+        // Size window to 85% of the screen, matching typical document viewer behavior
+        let screen = NSScreen.main ?? NSScreen.screens.first
+        let screenFrame = screen?.visibleFrame ?? NSRect(x: 0, y: 0, width: 1200, height: 800)
+        let windowWidth = min(screenFrame.width * 0.85, 1600)
+        let windowHeight = min(screenFrame.height * 0.9, 1000)
+        let windowX = screenFrame.origin.x + (screenFrame.width - windowWidth) / 2
+        let windowY = screenFrame.origin.y + (screenFrame.height - windowHeight) / 2
+
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 1200, height: 800),
-            styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
+            contentRect: NSRect(x: windowX, y: windowY, width: windowWidth, height: windowHeight),
+            styleMask: [.titled, .closable, .miniaturizable, .resizable],
             backing: .buffered,
             defer: false
         )
         window.contentViewController = hostingController
-        window.setFrameAutosaveName("ProPDFWindow")
         window.titleVisibility = .visible
         window.toolbarStyle = .unified
         window.tabbingMode = .preferred
         window.minSize = NSSize(width: 600, height: 400)
+        window.title = fileURL?.lastPathComponent ?? "Untitled"
 
         let windowController = NSWindowController(window: window)
         windowController.contentViewController = hostingController
         addWindowController(windowController)
-
-        window.center()
     }
 
     // MARK: - Password
