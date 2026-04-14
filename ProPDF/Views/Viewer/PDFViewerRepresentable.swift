@@ -20,18 +20,32 @@ struct PDFViewerRepresentable: NSViewRepresentable {
         pdfView.document = viewModel.pdfDocument
         pdfView.displayMode = viewModel.state.displayMode
 
+        // Scale to fit page width on initial load
+        DispatchQueue.main.async {
+            pdfView.autoScales = true
+            viewModel.state.zoomLevel = pdfView.scaleFactor
+        }
+
         context.coordinator.setupObservers(for: pdfView)
+        context.coordinator.pdfView = pdfView
 
         return pdfView
     }
 
     func updateNSView(_ pdfView: PDFView, context: Context) {
         context.coordinator.viewModel = viewModel
+        context.coordinator.pdfView = pdfView
 
         // Update document if changed
         if pdfView.document !== viewModel.pdfDocument {
             pdfView.document = viewModel.pdfDocument
             context.coordinator.setupObservers(for: pdfView)
+
+            // Scale to fit when a new document is opened
+            DispatchQueue.main.async {
+                pdfView.autoScales = true
+                viewModel.state.zoomLevel = pdfView.scaleFactor
+            }
         }
 
         // Update display mode
@@ -39,10 +53,13 @@ struct PDFViewerRepresentable: NSViewRepresentable {
             pdfView.displayMode = viewModel.state.displayMode
         }
 
-        // Update zoom
-        let targetZoom = viewModel.state.zoomLevel
-        if abs(pdfView.scaleFactor - targetZoom) > 0.001 {
-            pdfView.scaleFactor = targetZoom
+        // Update zoom — only if the user explicitly changed it
+        // (skip if autoScales just set the factor)
+        if !context.coordinator.isAutoScaling {
+            let targetZoom = viewModel.state.zoomLevel
+            if abs(pdfView.scaleFactor - targetZoom) > 0.001 {
+                pdfView.scaleFactor = targetZoom
+            }
         }
 
         // Navigate to page

@@ -5,6 +5,8 @@ import Combine
 
 class PDFViewCoordinator: NSObject, PDFViewDelegate {
     var viewModel: DocumentViewModel
+    weak var pdfView: PDFView?
+    var isAutoScaling = false
     private var pageChangeObserver: Any?
     private var scaleChangeObserver: Any?
     private var selectionChangeObserver: Any?
