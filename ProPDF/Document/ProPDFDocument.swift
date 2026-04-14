@@ -74,18 +74,18 @@ class ProPDFDocument: NSDocument {
 
     override func makeWindowControllers() {
         let contentView = ContentView(viewModel: documentViewModel)
+            .frame(minWidth: 800, minHeight: 600)
         let hostingController = NSHostingController(rootView: contentView)
+        // Prevent SwiftUI from shrinking the hosting view to its intrinsic size
+        hostingController.sizingOptions = [.preferredContentSize]
 
-        // Size window to 85% of the screen, matching typical document viewer behavior
         let screen = NSScreen.main ?? NSScreen.screens.first
-        let screenFrame = screen?.visibleFrame ?? NSRect(x: 0, y: 0, width: 1200, height: 800)
-        let windowWidth = min(screenFrame.width * 0.85, 1600)
-        let windowHeight = min(screenFrame.height * 0.9, 1000)
-        let windowX = screenFrame.origin.x + (screenFrame.width - windowWidth) / 2
-        let windowY = screenFrame.origin.y + (screenFrame.height - windowHeight) / 2
+        let screenFrame = screen?.visibleFrame ?? NSRect(x: 0, y: 0, width: 1440, height: 900)
+        let windowWidth = screenFrame.width * 0.85
+        let windowHeight = screenFrame.height * 0.9
 
         let window = NSWindow(
-            contentRect: NSRect(x: windowX, y: windowY, width: windowWidth, height: windowHeight),
+            contentRect: .zero,
             styleMask: [.titled, .closable, .miniaturizable, .resizable],
             backing: .buffered,
             defer: false
@@ -94,8 +94,17 @@ class ProPDFDocument: NSDocument {
         window.titleVisibility = .visible
         window.toolbarStyle = .unified
         window.tabbingMode = .preferred
-        window.minSize = NSSize(width: 600, height: 400)
+        window.minSize = NSSize(width: 700, height: 500)
         window.title = fileURL?.lastPathComponent ?? "Untitled"
+
+        // Set window size explicitly after content is attached
+        let windowFrame = NSRect(
+            x: screenFrame.origin.x + (screenFrame.width - windowWidth) / 2,
+            y: screenFrame.origin.y + (screenFrame.height - windowHeight) / 2,
+            width: windowWidth,
+            height: windowHeight
+        )
+        window.setFrame(windowFrame, display: true)
 
         let windowController = NSWindowController(window: window)
         windowController.contentViewController = hostingController
