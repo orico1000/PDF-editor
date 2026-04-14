@@ -1,7 +1,7 @@
 import Foundation
 
-// Entry point is in AppDelegate.swift via @main
-// This file defines shared types used across the app.
+// Shared types used across the app.
+// Entry point is in main.swift.
 
 enum DocumentAction: String {
     case toggleSidebar, toggleInspector

@@ -2,7 +2,6 @@ import Cocoa
 import PDFKit
 import UniformTypeIdentifiers
 
-@main
 class AppDelegate: NSObject, NSApplicationDelegate {
     let documentController = PDFDocumentController()
 

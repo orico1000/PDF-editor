@@ -80,6 +80,7 @@
 		8FE7F1C46FE435C94E0DA399 /* SecuritySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29BCE1B5EDE2263AD23776A2 /* SecuritySettings.swift */; };
 		8FF4E0F39F3C3EF2163F3775 /* OCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94DF99A9F1D66C8933B54C0 /* OCRService.swift */; };
 		937C8BD4C9916474B3178A87 /* PDFDocument+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB92394D7D667C01C967838 /* PDFDocument+Extensions.swift */; };
+		93A8671D9AFA83B4443C91A1 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D5B14C4DC58862AB68D1E4 /* main.swift */; };
 		9815AACB6BFED30DE5043E73 /* BookmarkModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D2B0B1A546BC7DFBCB1831 /* BookmarkModel.swift */; };
 		9E485BFDB6DE9F5ED04EC0C6 /* WatermarkConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2B9639BC000E9178140C0E /* WatermarkConfig.swift */; };
 		9EF8454A97D947FC78CCE7F0 /* RedactionBurnInSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F33904F7B3CD1A684FD8ED9A /* RedactionBurnInSheet.swift */; };
@@ -243,6 +244,7 @@
 		E2CD4D2A4350462643ADB341 /* PageOrganizerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageOrganizerView.swift; sourceTree = "<group>"; };
 		E6FF7E732BD444BEE032D455 /* PageThumbnailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageThumbnailCell.swift; sourceTree = "<group>"; };
 		E75412B353FD1271A3B3BF7A /* ExportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportSheet.swift; sourceTree = "<group>"; };
+		E7D5B14C4DC58862AB68D1E4 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		E94DF99A9F1D66C8933B54C0 /* OCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRService.swift; sourceTree = "<group>"; };
 		EBA7E00AA2BE66011724F42F /* FileCoordination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCoordination.swift; sourceTree = "<group>"; };
 		EBD5D71F263539ACC1678640 /* ThumbnailSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailSidebarView.swift; sourceTree = "<group>"; };
@@ -614,6 +616,7 @@
 			isa = PBXGroup;
 			children = (
 				5EDBEDB26D001E9A0BBFCA90 /* AppDelegate.swift */,
+				E7D5B14C4DC58862AB68D1E4 /* main.swift */,
 				CB2513D0347990033E04FAAB /* ProPDFApp.swift */,
 			);
 			path = App;
@@ -807,6 +810,7 @@
 				2A807BD2127E032DBE7A70D1 /* WatermarkService.swift in Sources */,
 				763AE5264877B7574AEBF6F2 /* WatermarkSheet.swift in Sources */,
 				C99114D607058B43835C945C /* WatermarkViewModel.swift in Sources */,
+				93A8671D9AFA83B4443C91A1 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
