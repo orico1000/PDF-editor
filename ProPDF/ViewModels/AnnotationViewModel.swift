@@ -222,9 +222,9 @@ class AnnotationViewModel {
 
     func addLink(bounds: CGRect, url: URL, on pageIndex: Int) {
         guard let doc = pdfDocument,
-              let page = doc.page(at: pageIndex) else { return }
+              let page = doc.page(at: pageIndex),
+              let annotation = PDFAnnotation.link(bounds: bounds, url: url) else { return }
 
-        let annotation = PDFAnnotation.link(bounds: bounds, url: url)
         page.addAnnotation(annotation)
 
         parent?.markDocumentEdited()

@@ -1,4 +1,5 @@
 import SwiftUI
+import PDFKit
 import Security
 
 struct DigitalSignatureSheet: View {
@@ -61,7 +62,7 @@ struct DigitalSignatureSheet: View {
                     List(certificates, selection: $selectedCertificate) { cert in
                         HStack {
                             Image(systemName: "person.badge.key.fill")
-                                .foregroundStyle(.accent)
+                                .foregroundStyle(Color.accentColor)
                             VStack(alignment: .leading) {
                                 Text(cert.name)
                                     .font(.caption)
@@ -149,7 +150,7 @@ struct DigitalSignatureSheet: View {
             certificates = items.compactMap { item in
                 let name = item[kSecAttrLabel as String] as? String ?? "Unknown"
                 let issuer = item[kSecAttrIssuer as String] as? String ?? "Unknown Issuer"
-                let identity = item[kSecValueRef as String] as? SecIdentity
+                let identity = item[kSecValueRef as String].map { $0 as! SecIdentity }
 
                 return CertificateInfo(
                     name: name,
@@ -169,9 +170,13 @@ struct DigitalSignatureSheet: View {
             return
         }
 
-        // Digital signing would use the Security framework and CMSEncoder
-        // For now, mark the document as signed with metadata
-        viewModel.fillSign.applyDigitalSignature(reason: reason, location: location)
+        // Visual signature only — not cryptographic (see DigitalSignatureService docs)
+        if let doc = viewModel.pdfDocument {
+            var attributes = doc.documentAttributes ?? [:]
+            attributes[PDFDocumentAttribute.subjectAttribute] = "Signed: \(reason)"
+            doc.documentAttributes = attributes
+            viewModel.markDocumentEdited()
+        }
         dismiss()
     }
 }

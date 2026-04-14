@@ -47,7 +47,7 @@ private struct FontPickerPopover: View {
 
             HStack {
                 Text("Size:")
-                TextField("Size", value: $fontSize, format: .number)
+                TextField("Size", value: $fontSize, formatter: NumberFormatter())
                     .textFieldStyle(.roundedBorder)
                     .frame(width: 60)
                 Stepper("", value: $fontSize, in: 4...200, step: 1)
@@ -64,7 +64,7 @@ private struct FontPickerPopover: View {
                     Spacer()
                     if family == fontName {
                         Image(systemName: "checkmark")
-                            .foregroundStyle(.accent)
+                            .foregroundStyle(Color.accentColor)
                             .font(.caption)
                     }
                 }

@@ -289,7 +289,7 @@ class FormEditorViewModel {
             return .dropdown
         case .signature:
             return .signature
-        @unknown default:
+        default:
             return .textField
         }
     }

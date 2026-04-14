@@ -46,7 +46,7 @@ struct ImageConversionService {
         case .png:
             data = rep.representation(using: .png, properties: [:])
         case .tiff:
-            data = rep.representation(using: .tiff, properties: [.compressionMethod: NSTIFFCompression.lzw.rawValue])
+            data = rep.representation(using: .tiff, properties: [.compressionMethod: NSBitmapImageRep.TIFFCompression.lzw.rawValue])
         }
 
         guard let imageData = data else {

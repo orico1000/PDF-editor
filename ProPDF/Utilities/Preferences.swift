@@ -42,7 +42,7 @@ final class Preferences {
     }
 
     var defaultZoomLevel: CGFloat {
-        get { defaults.double(forKey: Keys.defaultZoomLevel) as CGFloat }
+        get { CGFloat(defaults.double(forKey: Keys.defaultZoomLevel)) }
         set { defaults.set(newValue, forKey: Keys.defaultZoomLevel) }
     }
 

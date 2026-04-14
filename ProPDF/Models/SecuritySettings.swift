@@ -1,4 +1,5 @@
 import Foundation
+import CoreGraphics
 
 struct SecuritySettings: Equatable {
     var openPassword: String?

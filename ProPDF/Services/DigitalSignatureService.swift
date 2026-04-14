@@ -69,8 +69,10 @@ struct DigitalSignatureService {
         }
 
         var email: String?
-        if let emailAddresses = SecCertificateCopyEmailAddresses(cert) as? [String],
-           let firstEmail = emailAddresses.first {
+        var emailAddresses: CFArray?
+        if SecCertificateCopyEmailAddresses(cert, &emailAddresses) == errSecSuccess,
+           let emails = emailAddresses as? [String],
+           let firstEmail = emails.first {
             email = firstEmail
         }
 

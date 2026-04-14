@@ -46,7 +46,7 @@ struct ClipboardCoordinator {
         // Store annotation properties as a dictionary
         let data: [String: Any] = [
             "type": annotation.type ?? "",
-            "bounds": NSStringFromRect(NSRect(cgRect: annotation.bounds)),
+            "bounds": NSStringFromRect(annotation.bounds),
             "contents": annotation.contents ?? "",
         ]
 

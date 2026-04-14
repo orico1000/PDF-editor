@@ -125,7 +125,7 @@ struct WatermarkSheet: View {
             if let name = imageName {
                 HStack {
                     Image(systemName: "photo")
-                        .foregroundStyle(.accent)
+                        .foregroundStyle(Color.accentColor)
                     Text(name)
                         .font(.caption)
                     Spacer()
@@ -193,7 +193,8 @@ struct WatermarkSheet: View {
         isApplying = true
 
         Task {
-            await viewModel.watermark.apply(config: config)
+            viewModel.watermark.config = config
+            await viewModel.watermark.apply()
             await MainActor.run {
                 isApplying = false
                 dismiss()

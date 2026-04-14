@@ -76,7 +76,7 @@ private struct ThumbnailItemView: View {
 
             Text("\(pageIndex + 1)")
                 .font(.caption2)
-                .foregroundStyle(isSelected ? .accent : .secondary)
+                .foregroundStyle(isSelected ? Color.accentColor : .secondary)
         }
         .padding(4)
         .background(
@@ -114,7 +114,7 @@ private struct ThumbnailDropDelegate: DropDelegate {
               draggedIndex != targetIndex,
               viewModel.state.editorMode == .organize else { return false }
 
-        viewModel.pageOrganize.movePage(from: draggedIndex, to: targetIndex)
+        viewModel.pageOrganize.reorderPages(from: IndexSet(integer: draggedIndex), to: targetIndex)
         self.draggedIndex = nil
         return true
     }

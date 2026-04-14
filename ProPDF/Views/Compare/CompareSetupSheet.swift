@@ -28,7 +28,7 @@ struct CompareSetupSheet: View {
             GroupBox {
                 HStack {
                     Image(systemName: "doc.fill")
-                        .foregroundStyle(.accent)
+                        .foregroundStyle(Color.accentColor)
                     VStack(alignment: .leading) {
                         Text("Current Document")
                             .font(.caption)
@@ -51,7 +51,7 @@ struct CompareSetupSheet: View {
             GroupBox {
                 HStack {
                     Image(systemName: "doc")
-                        .foregroundStyle(comparisonDocumentURL != nil ? .accent : .secondary)
+                        .foregroundStyle(comparisonDocumentURL != nil ? Color.accentColor : .secondary)
                     VStack(alignment: .leading) {
                         Text("Comparison Document")
                             .font(.caption)
@@ -134,7 +134,8 @@ struct CompareSetupSheet: View {
         errorMessage = nil
 
         Task {
-            await viewModel.compare.compare(with: comparisonDoc)
+            viewModel.compare.document2 = comparisonDoc
+            await viewModel.compare.compare()
             await MainActor.run {
                 isComparing = false
                 showComparisonView = true

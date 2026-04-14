@@ -1,5 +1,6 @@
 import SwiftUI
 import AppKit
+import PDFKit
 
 struct StampPickerView: View {
     let viewModel: DocumentViewModel

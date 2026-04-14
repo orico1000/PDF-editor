@@ -154,7 +154,7 @@ private struct FormFieldRow: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
-        @unknown default:
+        default:
             TextField("Value", text: $textValue)
                 .textFieldStyle(.roundedBorder)
         }

@@ -8,13 +8,9 @@ struct PrintService {
         let pdfView = PDFView()
         pdfView.document = document
         pdfView.autoScales = true
+        pdfView.frame = NSRect(x: 0, y: 0, width: 612, height: 792)
 
-        guard let printOperation = pdfView.printOperation(
-            for: printInfo,
-            scalingMode: .pageScaleDownToFit,
-            autoRotate: true
-        ) else { return }
-
+        let printOperation = NSPrintOperation(view: pdfView, printInfo: printInfo)
         printOperation.showsPrintPanel = true
         printOperation.showsProgressPanel = true
         printOperation.run()
@@ -28,7 +24,6 @@ struct PrintService {
     }
 
     func printPages(document: PDFDocument, pageRange: ClosedRange<Int>, printInfo: NSPrintInfo) {
-        // Extract the specified page range into a temporary document
         let tempDoc = PDFDocument()
         for i in pageRange {
             guard let page = document.page(at: i) else { continue }

@@ -11,7 +11,7 @@ struct SignaturePlacementView: View {
 
     var body: some View {
         ZStack {
-            if isPlacing, let signature = viewModel.fillSign.currentSignature {
+            if isPlacing, let signature = viewModel.fillSign.activeSignature {
                 let signatureImage = signature.renderToImage(size: signatureSize)
 
                 // Signature preview
@@ -69,7 +69,7 @@ struct SignaturePlacementView: View {
 
                         Button("Cancel") {
                             isPlacing = false
-                            viewModel.fillSign.currentSignature = nil
+                            viewModel.fillSign.activeSignature = nil
                         }
                         .buttonStyle(.bordered)
                     }
@@ -79,7 +79,7 @@ struct SignaturePlacementView: View {
             }
         }
         .allowsHitTesting(viewModel.state.editorMode == .fillSign)
-        .onChange(of: viewModel.fillSign.currentSignature) { _, newValue in
+        .onChange(of: viewModel.fillSign.activeSignature) { _, newValue in
             isPlacing = newValue != nil
             if newValue != nil {
                 signaturePosition = CGPoint(x: 300, y: 400)
@@ -89,7 +89,7 @@ struct SignaturePlacementView: View {
     }
 
     private func placeSignature() {
-        guard let signature = viewModel.fillSign.currentSignature,
+        guard let signature = viewModel.fillSign.activeSignature,
               let doc = viewModel.pdfDocument,
               let page = doc.page(at: viewModel.state.currentPageIndex) else { return }
 
@@ -113,6 +113,6 @@ struct SignaturePlacementView: View {
         viewModel.markDocumentEdited()
 
         isPlacing = false
-        viewModel.fillSign.currentSignature = nil
+        viewModel.fillSign.activeSignature = nil
     }
 }

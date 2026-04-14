@@ -225,7 +225,7 @@ private struct TagNodeRow: View {
         HStack(spacing: 6) {
             Image(systemName: iconForTag(node.tagType))
                 .font(.caption)
-                .foregroundStyle(.accent)
+                .foregroundStyle(Color.accentColor)
 
             Text(node.tagType.label)
                 .font(.caption)

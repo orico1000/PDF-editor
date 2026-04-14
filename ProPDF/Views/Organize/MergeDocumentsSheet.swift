@@ -37,7 +37,7 @@ struct MergeDocumentsSheet: View {
                         ForEach(Array(documentURLs.enumerated()), id: \.offset) { index, url in
                             HStack {
                                 Image(systemName: "doc.fill")
-                                    .foregroundStyle(.accent)
+                                    .foregroundStyle(Color.accentColor)
                                 VStack(alignment: .leading) {
                                     Text(url.lastPathComponent)
                                         .font(.caption)

@@ -18,7 +18,7 @@ extension NSImage {
         return rep.representation(using: .png, properties: [:])
     }
 
-    func tiffData(compression: NSTIFFCompression = .lzw) -> Data? {
+    func tiffData(compression: NSBitmapImageRep.TIFFCompression = .lzw) -> Data? {
         guard let tiffData = tiffRepresentation,
               let rep = NSBitmapImageRep(data: tiffData) else { return nil }
         return rep.representation(using: .tiff, properties: [.compressionMethod: compression.rawValue])
@@ -63,7 +63,9 @@ extension NSImage {
               let pdfDoc = CGPDFDocument(provider),
               let pdfPage = pdfDoc.page(at: 1) else { return nil }
 
-        return PDFPage(cgPage: pdfPage)
+        guard let pdfDoc2 = PDFDocument(data: data as Data),
+              let resultPage = pdfDoc2.page(at: 0) else { return nil }
+        return resultPage
     }
 }
 

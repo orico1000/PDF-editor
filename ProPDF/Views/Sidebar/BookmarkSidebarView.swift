@@ -30,7 +30,7 @@ struct BookmarkSidebarView: View {
                     OutlineGroup(bookmarks, children: \.childrenOptional) { bookmark in
                         HStack {
                             Image(systemName: "bookmark.fill")
-                                .foregroundStyle(.accent)
+                                .foregroundStyle(Color.accentColor)
                                 .font(.caption)
                             Text(bookmark.label)
                                 .lineLimit(2)

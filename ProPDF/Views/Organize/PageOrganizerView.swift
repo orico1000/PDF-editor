@@ -133,7 +133,7 @@ private struct PageGridDropDelegate: DropDelegate {
 
     func performDrop(info: DropInfo) -> Bool {
         guard let source = draggedPage, source != targetIndex else { return false }
-        viewModel.pageOrganize.movePage(from: source, to: targetIndex)
+        viewModel.pageOrganize.reorderPages(from: IndexSet(integer: source), to: targetIndex)
         draggedPage = nil
         return true
     }

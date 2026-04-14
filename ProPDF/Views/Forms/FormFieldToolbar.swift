@@ -10,7 +10,7 @@ struct FormFieldToolbar: View {
             ForEach(FormFieldType.allCases) { fieldType in
                 Button {
                     selectedFieldType = fieldType
-                    viewModel.formEditor.selectedFieldType = fieldType
+                    viewModel.formEditor.currentFieldType = fieldType
                 } label: {
                     VStack(spacing: 2) {
                         Image(systemName: fieldType.systemImage)

@@ -42,13 +42,7 @@ extension PDFDocument {
     }
 
     func searchAll(_ query: String, options: NSString.CompareOptions = [.caseInsensitive]) -> [PDFSelection] {
-        var results: [PDFSelection] = []
-        var selection = findString(query, withOptions: options)
-        while let found = selection {
-            results.append(found)
-            selection = findString(query, fromSelection: found, withOptions: options)
-        }
-        return results
+        findString(query, withOptions: options) ?? []
     }
 
     func textContent() -> String {

@@ -13,7 +13,7 @@ struct DropZoneView: View {
         VStack(spacing: 12) {
             Image(systemName: icon)
                 .font(.system(size: 40))
-                .foregroundStyle(isTargeted ? .accent : .secondary)
+                .foregroundStyle(isTargeted ? Color.accentColor : .secondary)
 
             Text(label)
                 .font(.headline)

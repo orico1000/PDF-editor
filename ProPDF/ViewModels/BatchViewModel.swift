@@ -177,14 +177,12 @@ class BatchViewModel {
     private func compressDocument(_ doc: PDFDocument, to outputURL: URL, jobIndex: Int) async throws {
         let quality = compressionQuality
 
+        let totalPages = doc.pageCount
         try PDFRewriter.rewriteDocument(doc, to: outputURL) { page, pageIndex, context in
             // The page content is already drawn by the rewriter.
             // For compression, the main savings come from image downsampling
             // which happens at the CGContext PDF level via the quality settings.
-            await MainActor.run { [weak self] in
-                let pageProgress = Double(pageIndex + 1) / Double(doc.pageCount)
-                self?.jobs[jobIndex].status = .processing(progress: pageProgress)
-            }
+            let _ = pageIndex // progress tracked at job level
         }
 
         // If the rewritten file is larger, try data representation approach

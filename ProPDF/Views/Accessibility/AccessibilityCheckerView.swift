@@ -32,7 +32,7 @@ struct AccessibilityCheckerView: View {
                 VStack(spacing: 16) {
                     Image(systemName: "accessibility")
                         .font(.system(size: 50))
-                        .foregroundStyle(.accent)
+                        .foregroundStyle(Color.accentColor)
 
                     Text("Check Document Accessibility")
                         .font(.headline)

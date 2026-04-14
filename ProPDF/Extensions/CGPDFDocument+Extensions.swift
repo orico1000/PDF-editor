@@ -37,7 +37,7 @@ struct PDFRewriter {
             var pageBox = page.bounds(for: .mediaBox)
 
             let pageInfo: [String: Any] = [
-                kCGPDFContextMediaBox as String: NSValue(rect: NSRect(cgRect: pageBox))
+                kCGPDFContextMediaBox as String: NSValue(rect: pageBox)
             ]
             context.beginPDFPage(pageInfo as CFDictionary)
 

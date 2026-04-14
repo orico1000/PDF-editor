@@ -49,7 +49,7 @@ struct PageThumbnailCell: View {
             // Page number
             Text("Page \(pageIndex + 1)")
                 .font(.caption)
-                .foregroundStyle(isSelected ? .accent : .primary)
+                .foregroundStyle(isSelected ? Color.accentColor : .primary)
                 .fontWeight(isSelected ? .semibold : .regular)
         }
         .padding(8)

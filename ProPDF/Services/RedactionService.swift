@@ -101,10 +101,8 @@ struct RedactionService {
             pdfContext.endPDFPage()
             pdfContext.closePDF()
 
-            guard let provider = CGDataProvider(data: imageData as CFData),
-                  let newCGDoc = CGPDFDocument(provider),
-                  let newCGPage = newCGDoc.page(at: 1),
-                  let newPage = PDFPage(cgPage: newCGPage) else {
+            guard let newPDFDoc = PDFDocument(data: imageData as Data),
+                  let newPage = newPDFDoc.page(at: 0) else {
                 throw ProPDFError.redactionFailed("Failed to rebuild page \(pageIndex + 1) after redaction.")
             }
 

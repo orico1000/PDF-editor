@@ -112,18 +112,18 @@ struct HeaderFooterSheet: View {
                         VStack(spacing: 4) {
                             HStack {
                                 Text("Top:").font(.caption).frame(width: 50, alignment: .trailing)
-                                TextField("", value: $config.margins.top, format: .number)
+                                TextField("", value: $config.margins.top, formatter: NumberFormatter())
                                     .textFieldStyle(.roundedBorder).frame(width: 60)
                                 Text("Bottom:").font(.caption).frame(width: 50, alignment: .trailing)
-                                TextField("", value: $config.margins.bottom, format: .number)
+                                TextField("", value: $config.margins.bottom, formatter: NumberFormatter())
                                     .textFieldStyle(.roundedBorder).frame(width: 60)
                             }
                             HStack {
                                 Text("Left:").font(.caption).frame(width: 50, alignment: .trailing)
-                                TextField("", value: $config.margins.left, format: .number)
+                                TextField("", value: $config.margins.left, formatter: NumberFormatter())
                                     .textFieldStyle(.roundedBorder).frame(width: 60)
                                 Text("Right:").font(.caption).frame(width: 50, alignment: .trailing)
-                                TextField("", value: $config.margins.right, format: .number)
+                                TextField("", value: $config.margins.right, formatter: NumberFormatter())
                                     .textFieldStyle(.roundedBorder).frame(width: 60)
                             }
                         }
@@ -243,7 +243,8 @@ struct HeaderFooterSheet: View {
         isApplying = true
 
         Task {
-            await viewModel.headerFooter.apply(config: config)
+            viewModel.headerFooter.config = config
+            await viewModel.headerFooter.apply()
             await MainActor.run {
                 isApplying = false
                 dismiss()

@@ -13,34 +13,31 @@ struct FormFieldOverlay: View {
             Color.clear
                 .contentShape(Rectangle())
                 .onTapGesture { location in
-                    if let fieldType = viewModel.formEditor.selectedFieldType {
-                        addField(type: fieldType, at: location)
-                    }
+                    addField(type: viewModel.formEditor.currentFieldType, at: location)
                 }
                 .allowsHitTesting(
-                    viewModel.state.editorMode == .formEditor &&
-                    viewModel.formEditor.selectedFieldType != nil
+                    viewModel.state.editorMode == .formEditor
                 )
 
             // Render existing fields as overlays
-            ForEach(Array(viewModel.formEditor.fields.enumerated()), id: \.element.id) { index, field in
+            ForEach(viewModel.formEditor.fields) { field in
                 if field.pageIndex == viewModel.state.currentPageIndex {
                     FormFieldPlaceholder(
                         field: field,
-                        isSelected: viewModel.formEditor.selectedFieldIndex == index,
+                        isSelected: viewModel.formEditor.selectedField?.id == field.id,
                         onSelect: {
-                            viewModel.formEditor.selectedFieldIndex = index
+                            viewModel.formEditor.selectedField = field
                         },
                         onMove: { delta in
-                            viewModel.formEditor.updateField(at: index) { f in
-                                f.bounds.origin.x += delta.width
-                                f.bounds.origin.y -= delta.height
-                            }
+                            var updated = field
+                            updated.bounds.origin.x += delta.width
+                            updated.bounds.origin.y -= delta.height
+                            viewModel.formEditor.updateField(updated)
                         },
                         onResize: { newSize in
-                            viewModel.formEditor.updateField(at: index) { f in
-                                f.bounds.size = newSize
-                            }
+                            var updated = field
+                            updated.bounds.size = newSize
+                            viewModel.formEditor.updateField(updated)
                         }
                     )
                 }
@@ -71,12 +68,7 @@ struct FormFieldOverlay: View {
             height: defaultSize.height
         )
 
-        let field = FormFieldModel(
-            fieldType: type,
-            bounds: bounds,
-            pageIndex: viewModel.state.currentPageIndex
-        )
-        viewModel.formEditor.addField(field)
+        viewModel.formEditor.addField(type: type, at: bounds, on: viewModel.state.currentPageIndex)
     }
 }
 

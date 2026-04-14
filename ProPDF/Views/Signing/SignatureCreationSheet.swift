@@ -198,7 +198,7 @@ struct SignatureCreationSheet: View {
             signature = SignatureModel(image: image, name: signatureName)
         }
 
-        viewModel.fillSign.addSignature(signature)
+        viewModel.fillSign.saveSignature(signature)
         dismiss()
     }
 }

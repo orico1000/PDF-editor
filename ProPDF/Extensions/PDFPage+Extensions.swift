@@ -98,6 +98,10 @@ extension PDFPage {
               let cgPage = cgDoc.page(at: 1) else {
             return PDFPage()
         }
-        return PDFPage(cgPage: cgPage) ?? PDFPage()
+        guard let blankDoc = PDFDocument(data: data as Data),
+              let blankPage = blankDoc.page(at: 0) else {
+            return PDFPage()
+        }
+        return blankPage
     }
 }

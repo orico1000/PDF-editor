@@ -119,11 +119,12 @@ class ProPDFDocument: NSDocument {
         let pdfView = PDFView()
         pdfView.document = pdfDocument
         pdfView.autoScales = true
+        pdfView.frame = NSRect(x: 0, y: 0, width: 612, height: 792)
 
-        let printOperation = pdfView.printOperation(for: printInfo, scalingMode: .pageScaleDownToFit, autoRotate: true)
-        printOperation?.showsPrintPanel = true
-        printOperation?.showsProgressPanel = true
-        runModalPrintOperation(printOperation!, delegate: nil, didRun: nil, contextInfo: nil)
+        let printOperation = NSPrintOperation(view: pdfView, printInfo: printInfo)
+        printOperation.showsPrintPanel = true
+        printOperation.showsProgressPanel = true
+        runModalPrintOperation(printOperation, delegate: nil, didRun: nil, contextInfo: nil)
     }
 
     // MARK: - Document types

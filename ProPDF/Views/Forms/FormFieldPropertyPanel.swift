@@ -18,9 +18,7 @@ struct FormFieldPropertyPanel: View {
             Text("Form Field Properties")
                 .font(.headline)
 
-            if let index = viewModel.formEditor.selectedFieldIndex,
-               index < viewModel.formEditor.fields.count {
-                let field = viewModel.formEditor.fields[index]
+            if let field = viewModel.formEditor.selectedField {
 
                 // Type
                 LabeledContent("Type") {
@@ -38,7 +36,9 @@ struct FormFieldPropertyPanel: View {
                     TextField("Field name", text: $fieldName)
                         .textFieldStyle(.roundedBorder)
                         .onChange(of: fieldName) { _, newValue in
-                            viewModel.formEditor.updateField(at: index) { $0.name = newValue }
+                            var updated = field
+                            updated.name = newValue
+                            viewModel.formEditor.updateField(updated)
                         }
                 }
 
@@ -50,7 +50,9 @@ struct FormFieldPropertyPanel: View {
                     TextField("Tooltip text", text: $tooltip)
                         .textFieldStyle(.roundedBorder)
                         .onChange(of: tooltip) { _, newValue in
-                            viewModel.formEditor.updateField(at: index) { $0.tooltip = newValue }
+                            var updated = field
+                            updated.tooltip = newValue
+                            viewModel.formEditor.updateField(updated)
                         }
                 }
 
@@ -63,7 +65,9 @@ struct FormFieldPropertyPanel: View {
                         TextField("Default value", text: $defaultValue)
                             .textFieldStyle(.roundedBorder)
                             .onChange(of: defaultValue) { _, newValue in
-                                viewModel.formEditor.updateField(at: index) { $0.defaultValue = newValue }
+                                var updated = field
+                                updated.defaultValue = newValue
+                                viewModel.formEditor.updateField(updated)
                             }
                     }
                 }
@@ -84,7 +88,9 @@ struct FormFieldPropertyPanel: View {
                                 Spacer()
                                 Button {
                                     options.remove(at: i)
-                                    viewModel.formEditor.updateField(at: index) { $0.options = options }
+                                    var updated = field
+                                    updated.options = options
+                                    viewModel.formEditor.updateField(updated)
                                 } label: {
                                     Image(systemName: "minus.circle")
                                         .foregroundStyle(.red)
@@ -96,9 +102,9 @@ struct FormFieldPropertyPanel: View {
                         HStack {
                             TextField("New option", text: $newOption)
                                 .textFieldStyle(.roundedBorder)
-                                .onSubmit { addOption(at: index) }
+                                .onSubmit { addOption(for: field) }
                             Button {
-                                addOption(at: index)
+                                addOption(for: field)
                             } label: {
                                 Image(systemName: "plus.circle")
                             }
@@ -114,13 +120,17 @@ struct FormFieldPropertyPanel: View {
                 Toggle("Required", isOn: $isRequired)
                     .font(.caption)
                     .onChange(of: isRequired) { _, newValue in
-                        viewModel.formEditor.updateField(at: index) { $0.isRequired = newValue }
+                        var updated = field
+                        updated.isRequired = newValue
+                        viewModel.formEditor.updateField(updated)
                     }
 
                 Toggle("Read Only", isOn: $isReadOnly)
                     .font(.caption)
                     .onChange(of: isReadOnly) { _, newValue in
-                        viewModel.formEditor.updateField(at: index) { $0.isReadOnly = newValue }
+                        var updated = field
+                        updated.isReadOnly = newValue
+                        viewModel.formEditor.updateField(updated)
                     }
 
                 Divider()
@@ -128,17 +138,21 @@ struct FormFieldPropertyPanel: View {
                 // Font
                 FontPickerButton(fontName: $fontName, fontSize: $fontSize)
                     .onChange(of: fontName) { _, newValue in
-                        viewModel.formEditor.updateField(at: index) { $0.fontName = newValue }
+                        var updated = field
+                        updated.fontName = newValue
+                        viewModel.formEditor.updateField(updated)
                     }
                     .onChange(of: fontSize) { _, newValue in
-                        viewModel.formEditor.updateField(at: index) { $0.fontSize = newValue }
+                        var updated = field
+                        updated.fontSize = newValue
+                        viewModel.formEditor.updateField(updated)
                     }
 
                 Spacer()
 
                 // Delete
                 Button(role: .destructive) {
-                    viewModel.formEditor.deleteField(at: index)
+                    viewModel.formEditor.deleteField(field)
                 } label: {
                     Label("Delete Field", systemImage: "trash")
                 }
@@ -151,15 +165,13 @@ struct FormFieldPropertyPanel: View {
             }
         }
         .onAppear { loadProperties() }
-        .onChange(of: viewModel.formEditor.selectedFieldIndex) { _, _ in
+        .onChange(of: viewModel.formEditor.selectedField?.id) { _, _ in
             loadProperties()
         }
     }
 
     private func loadProperties() {
-        guard let index = viewModel.formEditor.selectedFieldIndex,
-              index < viewModel.formEditor.fields.count else { return }
-        let field = viewModel.formEditor.fields[index]
+        guard let field = viewModel.formEditor.selectedField else { return }
         fieldName = field.name
         isRequired = field.isRequired
         isReadOnly = field.isReadOnly
@@ -170,10 +182,12 @@ struct FormFieldPropertyPanel: View {
         fontSize = field.fontSize
     }
 
-    private func addOption(at fieldIndex: Int) {
+    private func addOption(for field: FormFieldModel) {
         guard !newOption.isEmpty else { return }
         options.append(newOption)
-        viewModel.formEditor.updateField(at: fieldIndex) { $0.options = options }
+        var updated = field
+        updated.options = options
+        viewModel.formEditor.updateField(updated)
         newOption = ""
     }
 }
