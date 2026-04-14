@@ -5,9 +5,13 @@ import UniformTypeIdentifiers
 class AppDelegate: NSObject, NSApplicationDelegate {
     let documentController = PDFDocumentController()
 
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        // Build menu BEFORE windows appear so it's visible from the start
+        buildEntireMainMenu()
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSWindow.allowsAutomaticWindowTabbing = true
-        setupMainMenu()
 
         // Show Open dialog on first launch if no documents restored
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -129,12 +133,36 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NSDocumentController.shared.currentDocument as? ProPDFDocument
     }
 
-    // MARK: - Menu Setup
+    // MARK: - Complete Menu Bar
 
-    private func setupMainMenu() {
-        let mainMenu = NSApp.mainMenu ?? NSMenu()
+    private func buildEntireMainMenu() {
+        let mainMenu = NSMenu()
 
-        // Insert File menu at position 1 (after the app menu)
+        // ── App menu ──
+        let appMenu = NSMenu()
+        appMenu.addItem(NSMenuItem(title: "About ProPDF", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: ""))
+        appMenu.addItem(.separator())
+        appMenu.addItem(NSMenuItem(title: "Settings...", action: Selector(("showSettingsWindow:")), keyEquivalent: ","))
+        appMenu.addItem(.separator())
+        let servicesMenu = NSMenu(title: "Services")
+        let servicesItem = NSMenuItem(title: "Services", action: nil, keyEquivalent: "")
+        servicesItem.submenu = servicesMenu
+        appMenu.addItem(servicesItem)
+        NSApp.servicesMenu = servicesMenu
+        appMenu.addItem(.separator())
+        appMenu.addItem(NSMenuItem(title: "Hide ProPDF", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h"))
+        let hideOthersItem = NSMenuItem(title: "Hide Others", action: #selector(NSApplication.hideOtherApplications(_:)), keyEquivalent: "h")
+        hideOthersItem.keyEquivalentModifierMask = [.command, .option]
+        appMenu.addItem(hideOthersItem)
+        appMenu.addItem(NSMenuItem(title: "Show All", action: #selector(NSApplication.unhideAllApplications(_:)), keyEquivalent: ""))
+        appMenu.addItem(.separator())
+        appMenu.addItem(NSMenuItem(title: "Quit ProPDF", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+
+        let appMenuItem = NSMenuItem()
+        appMenuItem.submenu = appMenu
+        mainMenu.addItem(appMenuItem)
+
+        // ── File menu ──
         let fileMenu = NSMenu(title: "File")
 
         let newItem = NSMenuItem(title: "New Blank PDF", action: #selector(newBlankDocument(_:)), keyEquivalent: "n")
@@ -151,14 +179,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         openItem.target = self
         fileMenu.addItem(openItem)
 
-        // Open Recent submenu
+        // Open Recent
         let openRecentMenu = NSMenu(title: "Open Recent")
         let clearRecentItem = NSMenuItem(title: "Clear Menu", action: #selector(NSDocumentController.clearRecentDocuments(_:)), keyEquivalent: "")
         openRecentMenu.addItem(clearRecentItem)
         let openRecentItem = NSMenuItem(title: "Open Recent", action: nil, keyEquivalent: "")
         openRecentItem.submenu = openRecentMenu
         fileMenu.addItem(openRecentItem)
-        documentController.standardOpenRecentMenu = openRecentMenu
 
         fileMenu.addItem(.separator())
 
@@ -180,21 +207,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         fileMenu.addItem(.separator())
 
-        // Export submenu
+        // Export As submenu
         let exportMenu = NSMenu(title: "Export As")
-
-        let exportImagesItem = NSMenuItem(title: "Images (JPEG, PNG, TIFF)...", action: #selector(exportAsImages(_:)), keyEquivalent: "e")
-        exportImagesItem.keyEquivalentModifierMask = [.command, .shift]
-        exportImagesItem.target = self
-        exportMenu.addItem(exportImagesItem)
-
-        let exportTextItem = NSMenuItem(title: "Plain Text...", action: #selector(exportAsText(_:)), keyEquivalent: "")
-        exportTextItem.target = self
-        exportMenu.addItem(exportTextItem)
-
-        let exportSubmenuItem = NSMenuItem(title: "Export As", action: nil, keyEquivalent: "")
-        exportSubmenuItem.submenu = exportMenu
-        fileMenu.addItem(exportSubmenuItem)
+        let expImgItem = NSMenuItem(title: "Images (JPEG, PNG, TIFF)...", action: #selector(exportAsImages(_:)), keyEquivalent: "e")
+        expImgItem.keyEquivalentModifierMask = [.command, .shift]
+        expImgItem.target = self
+        exportMenu.addItem(expImgItem)
+        let expTxtItem = NSMenuItem(title: "Plain Text...", action: #selector(exportAsText(_:)), keyEquivalent: "")
+        expTxtItem.target = self
+        exportMenu.addItem(expTxtItem)
+        let exportSubItem = NSMenuItem(title: "Export As", action: nil, keyEquivalent: "")
+        exportSubItem.submenu = exportMenu
+        fileMenu.addItem(exportSubItem)
 
         fileMenu.addItem(.separator())
 
@@ -210,9 +234,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let fileMenuItem = NSMenuItem(title: "File", action: nil, keyEquivalent: "")
         fileMenuItem.submenu = fileMenu
-        mainMenu.insertItem(fileMenuItem, at: 1)
+        mainMenu.addItem(fileMenuItem)
 
-        // Edit menu at position 2
+        // ── Edit menu ──
         let editMenu = NSMenu(title: "Edit")
         editMenu.addItem(NSMenuItem(title: "Undo", action: Selector(("undo:")), keyEquivalent: "z"))
         editMenu.addItem(NSMenuItem(title: "Redo", action: Selector(("redo:")), keyEquivalent: "Z"))
@@ -222,94 +246,104 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         editMenu.addItem(NSMenuItem(title: "Paste", action: #selector(NSText.paste(_:)), keyEquivalent: "v"))
         editMenu.addItem(NSMenuItem(title: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a"))
         editMenu.addItem(.separator())
-
-        let findItem = NSMenuItem(title: "Find in Document...", action: #selector(menuAction(_:)), keyEquivalent: "f")
-        findItem.representedObject = DocumentAction.find.rawValue
-        findItem.target = self
+        let findItem = actionMenuItem("Find in Document...", action: .find, key: "f")
         editMenu.addItem(findItem)
 
         let editMenuItem = NSMenuItem(title: "Edit", action: nil, keyEquivalent: "")
         editMenuItem.submenu = editMenu
-        mainMenu.insertItem(editMenuItem, at: 2)
+        mainMenu.addItem(editMenuItem)
 
-        // View menu at position 3
+        // ── View menu ──
         let viewMenu = NSMenu(title: "View")
-        viewMenu.addItem(menuItem("Toggle Sidebar", action: .toggleSidebar, key: "s", modifiers: [.command, .option]))
-        viewMenu.addItem(menuItem("Toggle Inspector", action: .toggleInspector, key: "i", modifiers: [.command, .option]))
+        viewMenu.addItem(actionMenuItem("Toggle Sidebar", action: .toggleSidebar, key: "s", modifiers: [.command, .option]))
+        viewMenu.addItem(actionMenuItem("Toggle Inspector", action: .toggleInspector, key: "i", modifiers: [.command, .option]))
         viewMenu.addItem(.separator())
-        viewMenu.addItem(menuItem("Zoom In", action: .zoomIn, key: "+"))
-        viewMenu.addItem(menuItem("Zoom Out", action: .zoomOut, key: "-"))
-        viewMenu.addItem(menuItem("Zoom to Fit", action: .zoomToFit, key: "0"))
+        viewMenu.addItem(actionMenuItem("Zoom In", action: .zoomIn, key: "+"))
+        viewMenu.addItem(actionMenuItem("Zoom Out", action: .zoomOut, key: "-"))
+        viewMenu.addItem(actionMenuItem("Zoom to Fit", action: .zoomToFit, key: "0"))
         viewMenu.addItem(.separator())
-        viewMenu.addItem(menuItem("Single Page", action: .displaySingle))
-        viewMenu.addItem(menuItem("Single Page Continuous", action: .displaySingleContinuous))
-        viewMenu.addItem(menuItem("Two Pages", action: .displayTwoUp))
-        viewMenu.addItem(menuItem("Two Pages Continuous", action: .displayTwoUpContinuous))
+        viewMenu.addItem(actionMenuItem("Single Page", action: .displaySingle))
+        viewMenu.addItem(actionMenuItem("Single Page Continuous", action: .displaySingleContinuous))
+        viewMenu.addItem(actionMenuItem("Two Pages", action: .displayTwoUp))
+        viewMenu.addItem(actionMenuItem("Two Pages Continuous", action: .displayTwoUpContinuous))
 
         let viewMenuItem = NSMenuItem(title: "View", action: nil, keyEquivalent: "")
         viewMenuItem.submenu = viewMenu
-        mainMenu.insertItem(viewMenuItem, at: 3)
+        mainMenu.addItem(viewMenuItem)
 
-        // Tools menu
+        // ── Tools menu ──
         let toolsMenu = NSMenu(title: "Tools")
-        toolsMenu.addItem(menuItem("Run OCR", action: .runOCR, key: "r", modifiers: [.command, .shift]))
-        toolsMenu.addItem(menuItem("Compare Documents...", action: .compareDocuments))
-        toolsMenu.addItem(menuItem("Compress PDF...", action: .compress))
+        toolsMenu.addItem(actionMenuItem("Run OCR", action: .runOCR, key: "r", modifiers: [.command, .shift]))
+        toolsMenu.addItem(actionMenuItem("Compare Documents...", action: .compareDocuments))
+        toolsMenu.addItem(actionMenuItem("Compress PDF...", action: .compress))
         toolsMenu.addItem(.separator())
-        toolsMenu.addItem(menuItem("Add Watermark...", action: .addWatermark))
-        toolsMenu.addItem(menuItem("Add Header/Footer...", action: .addHeaderFooter))
+        toolsMenu.addItem(actionMenuItem("Add Watermark...", action: .addWatermark))
+        toolsMenu.addItem(actionMenuItem("Add Header/Footer...", action: .addHeaderFooter))
         toolsMenu.addItem(.separator())
-        toolsMenu.addItem(menuItem("Password & Security...", action: .security))
-        toolsMenu.addItem(menuItem("Redact Content...", action: .redact))
+        toolsMenu.addItem(actionMenuItem("Password & Security...", action: .security))
+        toolsMenu.addItem(actionMenuItem("Redact Content...", action: .redact))
         toolsMenu.addItem(.separator())
-        toolsMenu.addItem(menuItem("Accessibility Check...", action: .accessibilityCheck))
+        toolsMenu.addItem(actionMenuItem("Accessibility Check...", action: .accessibilityCheck))
 
         let toolsMenuItem = NSMenuItem(title: "Tools", action: nil, keyEquivalent: "")
         toolsMenuItem.submenu = toolsMenu
         mainMenu.addItem(toolsMenuItem)
 
-        // Pages menu
+        // ── Pages menu ──
         let pagesMenu = NSMenu(title: "Pages")
-        pagesMenu.addItem(menuItem("Insert Blank Page", action: .insertBlankPage, key: "n", modifiers: [.command, .shift]))
-        pagesMenu.addItem(menuItem("Delete Page", action: .deletePage))
+        pagesMenu.addItem(actionMenuItem("Insert Blank Page", action: .insertBlankPage, key: "n", modifiers: [.command, .shift]))
+        pagesMenu.addItem(actionMenuItem("Delete Page", action: .deletePage))
         pagesMenu.addItem(.separator())
-        pagesMenu.addItem(menuItem("Rotate Clockwise", action: .rotateRight, key: "]", modifiers: [.command]))
-        pagesMenu.addItem(menuItem("Rotate Counter-Clockwise", action: .rotateLeft, key: "[", modifiers: [.command]))
+        pagesMenu.addItem(actionMenuItem("Rotate Clockwise", action: .rotateRight, key: "]", modifiers: [.command]))
+        pagesMenu.addItem(actionMenuItem("Rotate Counter-Clockwise", action: .rotateLeft, key: "[", modifiers: [.command]))
         pagesMenu.addItem(.separator())
-        pagesMenu.addItem(menuItem("Extract Pages...", action: .extractPages))
-        pagesMenu.addItem(menuItem("Split Document...", action: .splitDocument))
+        pagesMenu.addItem(actionMenuItem("Extract Pages...", action: .extractPages))
+        pagesMenu.addItem(actionMenuItem("Split Document...", action: .splitDocument))
 
         let pagesMenuItem = NSMenuItem(title: "Pages", action: nil, keyEquivalent: "")
         pagesMenuItem.submenu = pagesMenu
         mainMenu.addItem(pagesMenuItem)
 
-        // Forms menu
+        // ── Forms menu ──
         let formsMenu = NSMenu(title: "Forms")
-        formsMenu.addItem(menuItem("Create Form Fields", action: .createForms))
-        formsMenu.addItem(menuItem("Auto-Detect Fields", action: .autoDetectFields))
+        formsMenu.addItem(actionMenuItem("Create Form Fields", action: .createForms))
+        formsMenu.addItem(actionMenuItem("Auto-Detect Fields", action: .autoDetectFields))
         formsMenu.addItem(.separator())
-        formsMenu.addItem(menuItem("Fill & Sign", action: .fillSign))
-        formsMenu.addItem(menuItem("Digital Signature...", action: .digitalSign))
+        formsMenu.addItem(actionMenuItem("Fill & Sign", action: .fillSign))
+        formsMenu.addItem(actionMenuItem("Digital Signature...", action: .digitalSign))
 
         let formsMenuItem = NSMenuItem(title: "Forms", action: nil, keyEquivalent: "")
         formsMenuItem.submenu = formsMenu
         mainMenu.addItem(formsMenuItem)
+
+        // ── Window menu ──
+        let windowMenu = NSMenu(title: "Window")
+        windowMenu.addItem(NSMenuItem(title: "Minimize", action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m"))
+        windowMenu.addItem(NSMenuItem(title: "Zoom", action: #selector(NSWindow.performZoom(_:)), keyEquivalent: ""))
+        windowMenu.addItem(.separator())
+        windowMenu.addItem(NSMenuItem(title: "Bring All to Front", action: #selector(NSApplication.arrangeInFront(_:)), keyEquivalent: ""))
+
+        let windowMenuItem = NSMenuItem(title: "Window", action: nil, keyEquivalent: "")
+        windowMenuItem.submenu = windowMenu
+        mainMenu.addItem(windowMenuItem)
+        NSApp.windowsMenu = windowMenu
+
+        // ── Help menu ──
+        let helpMenu = NSMenu(title: "Help")
+        let helpMenuItem = NSMenuItem(title: "Help", action: nil, keyEquivalent: "")
+        helpMenuItem.submenu = helpMenu
+        mainMenu.addItem(helpMenuItem)
+        NSApp.helpMenu = helpMenu
+
+        // Replace the entire menu bar
+        NSApp.mainMenu = mainMenu
     }
 
-    private func menuItem(_ title: String, action: DocumentAction, key: String = "", modifiers: NSEvent.ModifierFlags = []) -> NSMenuItem {
+    private func actionMenuItem(_ title: String, action: DocumentAction, key: String = "", modifiers: NSEvent.ModifierFlags = []) -> NSMenuItem {
         let item = NSMenuItem(title: title, action: #selector(menuAction(_:)), keyEquivalent: key)
         item.keyEquivalentModifierMask = modifiers
         item.representedObject = action.rawValue
         item.target = self
         return item
-    }
-}
-
-// MARK: - Open Recent support
-
-extension PDFDocumentController {
-    var standardOpenRecentMenu: NSMenu? {
-        get { value(forKey: "_recentDocumentsMenu") as? NSMenu }
-        set { setValue(newValue, forKey: "_recentDocumentsMenu") }
     }
 }
