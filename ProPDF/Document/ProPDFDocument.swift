@@ -74,10 +74,8 @@ class ProPDFDocument: NSDocument {
 
     override func makeWindowControllers() {
         let contentView = ContentView(viewModel: documentViewModel)
-            .frame(minWidth: 800, minHeight: 600)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         let hostingController = NSHostingController(rootView: contentView)
-        // Prevent SwiftUI from shrinking the hosting view to its intrinsic size
-        hostingController.sizingOptions = [.preferredContentSize]
 
         let screen = NSScreen.main ?? NSScreen.screens.first
         let screenFrame = screen?.visibleFrame ?? NSRect(x: 0, y: 0, width: 1440, height: 900)
@@ -85,7 +83,12 @@ class ProPDFDocument: NSDocument {
         let windowHeight = screenFrame.height * 0.9
 
         let window = NSWindow(
-            contentRect: .zero,
+            contentRect: NSRect(
+                x: screenFrame.origin.x + (screenFrame.width - windowWidth) / 2,
+                y: screenFrame.origin.y + (screenFrame.height - windowHeight) / 2,
+                width: windowWidth,
+                height: windowHeight
+            ),
             styleMask: [.titled, .closable, .miniaturizable, .resizable],
             backing: .buffered,
             defer: false
@@ -94,17 +97,8 @@ class ProPDFDocument: NSDocument {
         window.titleVisibility = .visible
         window.toolbarStyle = .unified
         window.tabbingMode = .preferred
-        window.minSize = NSSize(width: 700, height: 500)
+        window.minSize = NSSize(width: 600, height: 400)
         window.title = fileURL?.lastPathComponent ?? "Untitled"
-
-        // Set window size explicitly after content is attached
-        let windowFrame = NSRect(
-            x: screenFrame.origin.x + (screenFrame.width - windowWidth) / 2,
-            y: screenFrame.origin.y + (screenFrame.height - windowHeight) / 2,
-            width: windowWidth,
-            height: windowHeight
-        )
-        window.setFrame(windowFrame, display: true)
 
         let windowController = NSWindowController(window: window)
         windowController.contentViewController = hostingController
